@@ -1,0 +1,276 @@
+/* Configurações Globais */
+:root {
+    --cor-azul-principal: #003366; /* Tom de azul escuro (baseado na imagem) */
+    --cor-fundo: #f4f7fa;
+    --cor-texto: #333;
+    --cor-texto-header: white;
+    --cor-borda: #dee2e6;
+    --cor-sombra: rgba(0,0,0,0.1);
+    --cor-primaria: #007bff;
+    --cor-secundaria: #6c757d;
+    --cor-terciaria: #17a2b8;
+    --cor-perigo: #dc3545;
+    --cor-sucesso: #28a745;
+    --cor-aviso: #ffc107;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+}
+
+/* 1. CABEÇALHO */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--cor-azul-principal);
+    color: var(--cor-texto-header);
+    padding: 10px 30px;
+    box-shadow: 0 2px 5px var(--cor-sombra);
+}
+
+.main-header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.header-logo img {
+    height: 40px;
+    width: auto;
+}
+
+/* 2. CORPO PRINCIPAL */
+.app-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* 2.1. Botões de Ação */
+.action-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.action-button {
+    font-size: 1rem;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+}
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.action-button.primary { background-color: var(--cor-primaria); }
+.action-button.secondary { background-color: var(--cor-secundaria); }
+.action-button.terciaria { background-color: var(--cor-terciaria); }
+
+/* 2.2. Barra de Pesquisa */
+.search-bar-container {
+    margin-bottom: 20px;
+}
+
+#global-search-bar {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    box-sizing: border-box; /* Garante que o padding não quebre o layout */
+}
+
+/* 2.3. Lista de Regionais (Acordeão) */
+.regional-group {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px var(--cor-sombra);
+    margin-bottom: 15px;
+    overflow: hidden; /* Garante que os cantos arredondados funcionem */
+}
+
+.regional-header {
+    background-color: white;
+    border: none;
+    border-bottom: 1px solid var(--cor-fundo);
+    width: 100%;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+.regional-header:hover {
+    background-color: #f9f9f9;
+}
+.regional-header h3 {
+    margin: 0;
+    color: var(--cor-azul-principal);
+}
+.acordeao-icone {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+.regional-header.active .acordeao-icone {
+    transform: rotate(180deg);
+}
+
+.regional-body {
+    max-height: 0; /* Começa fechado */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #fafafa;
+    padding: 0; /* Será controlado no 'active' */
+}
+.regional-body.active {
+    padding: 20px;
+    max-height: 2000px; /* Um valor alto para permitir expansão */
+}
+
+/* 2.4. Cartão de Ocorrência */
+.ocorrencia-card {
+    background-color: white;
+    border: 1px solid var(--cor-borda);
+    border-left: 5px solid var(--cor-secundaria); /* Cor padrão */
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px var(--cor-sombra);
+}
+
+/* Cores de prioridade */
+.ocorrencia-card[data-contrato="VIP"] { border-left-color: var(--cor-aviso); }
+.ocorrencia-card[data-contrato="VIP BLACK"] { border-left-color: var(--cor-perigo); }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+.status-tag {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+.card-body p {
+    margin: 5px 0;
+    color: #555;
+}
+
+/* 3. MODAIS (Pop-ups) */
+.modal-overlay {
+    display: none; /* Oculto por padrão */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+.modal-overlay.active {
+    display: flex; /* Mostra o modal */
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2rem;
+    color: #aaa;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+.modal-close:hover {
+    color: #333;
+}
+
+/* Formulários dentro dos Modais */
+#form-add-tecnico, #form-add-ocorrencia {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+#form-add-tecnico input, #form-add-tecnico select,
+#form-add-ocorrencia input, #form-add-ocorrencia select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+}
+#form-add-tecnico button, #form-add-ocorrencia button {
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--cor-sucesso);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--cor-borda);
+    margin: 25px 0;
+}
+
+/* Lista de Técnicos */
+#lista-tecnicos-ativos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.tecnico-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+}
+.btn-delete-tecnico {
+    background-color: var(--cor-perigo);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Classe para ocultar elementos (para a pesquisa) */
+.hidden {
+    display: none !important;
+}

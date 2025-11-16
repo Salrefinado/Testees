@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundivox FSM - Dashboard</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-title">
+            <h1>Mundivox Field Service Management</h1>
+        </div>
+        <div class="header-logo">
+            <img src="{{ url_for('static', filename='img/logo-branca-3.png.webp') }}" alt="Logo Mundivox">
+        </div>
+    </header>
+
+    <main class="app-container">
+
+        <section class="action-bar">
+            <button id="btn-abrir-modal-ocorrencia" class="action-button primary">
+                &#43; Adicionar Ocorrência
+            </button>
+            <button id="btn-abrir-modal-tecnicos" class="action-button secondary">
+                &#128100; Gerenciar Técnicos
+            </button>
+            <a href="/mapa" class="action-button tertiary">
+                &#128205; Ver Mapa Logístico
+            </a>
+        </section>
+
+        <section class="search-bar-container">
+            <input type="text" id="global-search-bar" placeholder="&#128269; Pesquise por empresa, técnico, endereço, motivo, data...">
+        </section>
+
+        <section class="regional-list-container" id="regional-list">
+            </section>
+
+    </main>
+
+    <div id="modal-tecnicos" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="btn-fechar-modal-tecnicos">&times;</button>
+            <h2>Gerenciar Técnicos</h2>
+            
+            <form id="form-add-tecnico">
+                <h3>Adicionar Novo Técnico</h3>
+                <input type="text" id="tecnico-nome" placeholder="Nome do Técnico" required>
+                <select id="tecnico-regional" required>
+                    <option value="" disabled selected>Selecione a Regional</option>
+                    <option value="PR">PR</option>
+                    <option value="RJ">RJ</option>
+                    <option value="SP">SP</option>
+                    <option value="BH">BH</option>
+                    <option value="PE">PE</option>
+                    <option value="BA">BA</option>
+                    <option value="MG">MG</option>
+                    <option value="RS">RS</option>
+                </select>
+                <input type="tel" id="tecnico-telefone" placeholder="Telefone">
+                <input type="text" id="tecnico-detalhes" placeholder="Detalhes (Ex: não faz fusão, especialista CISCO)">
+                <button type="submit">Salvar Técnico</button>
+            </form>
+            
+            <hr>
+            
+            <h3>Técnicos Ativos</h3>
+            <div id="lista-tecnicos-ativos">
+                </div>
+        </div>
+    </div>
+
+    <div id="modal-ocorrencia" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="btn-fechar-modal-ocorrencia">&times;</button>
+            <h2>Adicionar Nova Ocorrência</h2>
+            <form id="form-add-ocorrencia">
+                <input type="text" id="ocorrencia-empresa" placeholder="Empresa" required>
+                <input type="text" id="ocorrencia-endereco" placeholder="Endereço" required>
+                
+                <select id="ocorrencia-regional" required>
+                    <option value="" disabled selected>Selecione a Regional da Ocorrência</option>
+                    <option value="PR">PR</option>
+                    <option value="RJ">RJ</option>
+                    <option value="SP">SP</option>
+                    <option value="BH">BH</option>
+                    <option value="PE">PE</option>
+                    <option value="BA">BA</option>
+                    <option value="MG">MG</option>
+                    <option value="RS">RS</option>
+                </select>
+                <select id="ocorrencia-contrato" required>
+                    <option value="COMUM">COMUM</option>
+                    <option value="VIP">VIP</option>
+                    <option value="VIP BLACK">VIP BLACK</option>
+                </select>
+                <input type="number" id="ocorrencia-receita" placeholder="Receita (Ex: 1500)">
+                <input type="date" id="ocorrencia-data" placeholder="Data de Abertura" required>
+                <input type="text" id="ocorrencia-motivo" placeholder="Motivo (Ex: Fusão da Fibra)" required>
+                <button type="submit">Salvar Ocorrência</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>
