@@ -1,22 +1,21 @@
 // --- 1. CONFIGURAÇÃO DO FIREBASE ---
-// !! COLE AQUI A SUA *NOVA E SEGURA* 'firebaseConfig' !!
+// COLE AQUI A SUA 'firebaseConfig' REAL E SEGURA
 const firebaseConfig = {
-    apiKey: "SUA_NOVA_API_KEY_SEGURA",
-    authDomain: "mundivox-fsm.firebaseapp.com",
-    projectId: "mundivox-fsm",
-    storageBucket: "mundivox-fsm.appspot.com", 
-    messagingSenderId: "550574445476",
-    appId: "SUA_NOVA_APP_ID"
+    apiKey: "AIzaSyCelFazhrkaTq3UjgFv4LHT3LdqgpD6h1s",
+    authDomain: "mundivox-fsm-9e2da.firebaseapp.com",
+    projectId: "mundivox-fsm-9e2da",
+    storageBucket: "mundivox-fsm-9e2da.firebasestorage.app",
+    messagingSenderId: "614588113700",
+    appId: "1:614588113700:web:1d24050b3ec4f6808449b1"
 };
 
-// Inicializa o Firebase (Sintaxe v8)
+// Inicializa o Firebase (Sintaxe v8 - O JEITO CERTO PARA O NOSSO PROJETO)
 try {
     firebase.initializeApp(firebaseConfig);
 } catch(e) {
     console.error("Erro ao inicializar o Firebase. Verifique sua 'firebaseConfig'.", e);
     alert("ERRO DE CONFIGURAÇÃO: O Firebase não pôde ser iniciado. Verifique o console.");
 }
-
 
 // Inicializa os serviços que usaremos (Sintaxe v8)
 const db = firebase.firestore();

@@ -1,29 +1,32 @@
-// --- 1. CONFIGURAÇÃO DO FIREBASE ---
-// !! COLE AQUI A SUA *NOVA E SEGURA* 'firebaseConfig' (a mesma do main.js) !!
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "SUA_NOVA_API_KEY_SEGURA",
-    authDomain: "mundivox-fsm.firebaseapp.com",
-    projectId: "mundivox-fsm",
-    storageBucket: "mundivox-fsm.appspot.com",
-    messagingSenderId: "550574445476",
-    appId: "SUA_NOVA_APP_ID"
+  apiKey: "AIzaSyCelFazhrkaTq3UjgFv4LHT3LdqgpD6h1s",
+  authDomain: "mundivox-fsm-9e2da.firebaseapp.com",
+  projectId: "mundivox-fsm-9e2da",
+  storageBucket: "mundivox-fsm-9e2da.firebasestorage.app",
+  messagingSenderId: "614588113700",
+  appId: "1:614588113700:web:1d24050b3ec4f6808449b1"
 };
 
-// Inicializa o Firebase (Sintaxe v8)
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // --- 2. VARIÁVEIS GLOBAIS ---
-let googleMap;
-let sortableList;
-let currentTecnico = null;
-let currentRegional = null;
-let allTecnicos = [];
-let allOcorrencias = [];
-let markers = [];
+let googleMap; // Instância do mapa
+let sortableList; // Instância da lista arrastável
+let currentTecnico = null; // O técnico selecionado
+let currentRegional = null; // A regional selecionada
+let allTecnicos = []; // Cache de técnicos
+let allOcorrencias = []; // Cache de ocorrências
+let markers = []; // Cache de marcadores do mapa
 let directionsService;
 let directionsRenderer;
-let unsubscribeOcorrencias; // Para parar de ouvir a regional antiga
 
 // --- 3. SELETORES DOM ---
 const selectRegional = document.getElementById('select-regional');
@@ -44,45 +47,50 @@ function initMap() {
     
     console.log("Mapa do Google inicializado.");
     
+    // Inicia a lógica da página
     initPageLogic();
 }
 
 // --- 5. LÓGICA DA PÁGINA ---
 function initPageLogic() {
     
+    // Carrega todos os técnicos (para o seletor)
     loadAllTecnicos();
     
+    // Listener para mudança de Regional
     selectRegional.addEventListener('change', (e) => {
         currentRegional = e.target.value;
         filterTecnicosPorRegional(currentRegional);
+        // Quando a regional muda, limpa a rota
         clearRoute();
-        // Carrega ocorrências assim que a regional é selecionada
-        if (currentRegional) {
-            loadOcorrenciasPorRegional(currentRegional);
-        }
     });
     
+    // Listener para mudança de Técnico
     selectTecnico.addEventListener('change', (e) => {
         const tecnicoId = e.target.value;
         currentTecnico = allTecnicos.find(t => t.id === tecnicoId);
         
+        // Se um técnico for selecionado, carrega suas ocorrências
         if (currentTecnico) {
-            processarRota();
+            loadOcorrenciasPorRegional(currentRegional);
         } else {
             clearRoute();
         }
     });
     
+    // Listener do botão "Reajustar"
     btnReajustar.addEventListener('click', () => {
         if (confirm('Isso irá remover todos os ajustes manuais da rota deste técnico e recalcular a ordem ideal. Deseja continuar?')) {
             resetOrdemManual();
         }
     });
     
+    // Inicializa a lista arrastável
     sortableList = new Sortable(listaOcorrenciasMap, {
         animation: 150,
         ghostClass: 'placeholder-drag',
         onEnd: (evt) => {
+            // Chamado quando o usuário solta um item
             updateOrdemManual(evt.target.children);
         }
     });
@@ -115,20 +123,20 @@ function filterTecnicosPorRegional(regional) {
 
 // Carrega as ocorrências da regional (e inicia o listener)
 function loadOcorrenciasPorRegional(regional) {
+    // Remove o listener antigo, se houver
     if (typeof unsubscribeOcorrencias === 'function') {
-        unsubscribeOcorrencias(); // Para de ouvir a regional antiga
+        unsubscribeOcorrencias();
     }
     
+    // Ouve em tempo real as ocorrências da regional e que estão 'Fila de espera'
     unsubscribeOcorrencias = db.collection('ocorrencias')
         .where('regional', '==', regional)
         .where('status', '==', 'Fila de espera')
         .onSnapshot(snapshot => {
             allOcorrencias = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Se um técnico estiver selecionado, processa a rota
             if (currentTecnico) {
-                processarRota();
-            } else {
-                 // Se nenhum técnico, só mostra a lista (sem filtro de skill)
                 processarRota();
             }
         });
@@ -137,41 +145,34 @@ function loadOcorrenciasPorRegional(regional) {
 // --- 6. O ALGORITMO DE PRIORIZAÇÃO ---
 
 function processarRota() {
-    if (allOcorrencias.length === 0) {
+    if (!currentTecnico || allOcorrencias.length === 0) {
         clearRoute();
         return;
     }
     
-    let ocorrenciasAptas = allOcorrencias;
-    
-    // 1. FILTRAR por SKILL (APENAS se um técnico estiver selecionado)
-    if (currentTecnico) {
-        ocorrenciasAptas = allOcorrencias.filter(oc => {
-            const motivo = oc.motivo.toLowerCase();
-            if (!currentTecnico.detalhes || currentTecnico.detalhes.length === 0) {
-                return true; // Técnico não tem limitações
-            }
-            
-            const isInapto = currentTecnico.detalhes.some(detalhe => {
-                return motivo.includes(detalhe.toLowerCase().trim());
-            });
-            
-            return !isInapto;
+    // 1. FILTRAR por SKILL (Ocorrências que o técnico PODE fazer)
+    let ocorrenciasAptas = allOcorrencias.filter(oc => {
+        const motivo = oc.motivo.toLowerCase();
+        // `some` retorna true se *algum* detalhe do técnico bater com o motivo
+        const isInapto = currentTecnico.detalhes.some(detalhe => {
+            return motivo.includes(detalhe.toLowerCase());
         });
-    }
-
+        
+        return !isInapto; // Retorna true se ele NÃO for inapto
+    });
+    
     // 2. ORDENAR (Sua hierarquia)
     let ocorrenciasOrdenadas = ocorrenciasAptas.sort((a, b) => {
         
-        // REGRA 0: Ordem Manual
-        const ordemA = a.ordemManual || 99999;
-        const ordemB = b.ordemManual || 99999;
+        // REGRA 0: Ordem Manual (A mais importante)
+        const ordemA = a.ordemManual || 9999;
+        const ordemB = b.ordemManual || 9999;
         
-        if (ordemA !== 99999 || ordemB !== 99999) {
+        if (ordemA !== 9999 || ordemB !== 9999) {
             return ordemA - ordemB;
         }
         
-        // REGRA 1: Contrato
+        // REGRA 1: Contrato (VIP BLACK > VIP > COMUM)
         const contratoValor = { "VIP BLACK": 3, "VIP": 2, "COMUM": 1 };
         const valA = contratoValor[a.contrato] || 0;
         const valB = contratoValor[b.contrato] || 0;
@@ -179,15 +180,16 @@ function processarRota() {
             return valB - valA; // Decrescente
         }
         
-        // REGRA 2: Proximidade (AINDA NÃO IMPLEMENTADO)
-        // TODO: Calcular distância
+        // REGRA 2: Proximidade (AINDA NÃO IMPLEMENTADO - Requer Geocoding)
+        // TODO: Calcular distância do técnico para 'a' e 'b'
+        // Por enquanto, pulamos para a próxima regra
         
-        // REGRA 3: Receita
+        // REGRA 3: Receita (Maior > Menor)
         if (a.receita !== b.receita) {
             return b.receita - a.receita; // Decrescente
         }
         
-        // REGRA 4: Data de Abertura
+        // REGRA 4: Data de Abertura (Mais Antiga > Mais Nova)
         const dataA = new Date(a.dataAbertura);
         const dataB = new Date(b.dataAbertura);
         return dataA - dataB; // Crescente (mais antiga primeiro)
@@ -200,12 +202,7 @@ function processarRota() {
 
 // Renderiza a lista na sidebar
 function renderListaOrdenada(ocorrencias) {
-    listaOcorrenciasMap.innerHTML = '';
-    
-    if(ocorrencias.length === 0) {
-        listaOcorrenciasMap.innerHTML = '<p>Nenhuma ocorrência compatível encontrada.</p>';
-        return;
-    }
+    listaOcorrenciasMap.innerHTML = ''; // Limpa
     
     ocorrencias.forEach((oc, index) => {
         const item = document.createElement('li');
@@ -224,46 +221,49 @@ function renderListaOrdenada(ocorrencias) {
 
 // Desenha a rota no mapa
 function renderRotaNoMapa(ocorrencias) {
+    // TODO: Usar a localização real do técnico
+    // Por enquanto, usaremos o endereço da 1ª ocorrência como "partida"
+    // ou apenas traçar a rota entre as ocorrências
+    
     clearMarkers();
     
     if (ocorrencias.length === 0) {
-        directionsRenderer.setDirections({ routes: [] });
+        directionsRenderer.setDirections({ routes: [] }); // Limpa a rota
         return;
     }
     
-    // TODO: Usar a localização real do técnico como 'origin'
-    
     const waypoints = [];
+    
+    // O primeiro é a origem
     const origin = ocorrencias[0].endereco;
-    let destination = origin; // Padrão se houver apenas 1
     
-    if (ocorrencias.length > 1) {
-        destination = ocorrencias[ocorrencias.length - 1].endereco;
-    }
+    // O último é o destino
+    const destination = ocorrencias[ocorrencias.length - 1].endereco;
     
+    // Os do meio são waypoints
     if (ocorrencias.length > 2) {
-        ocorrencias.slice(1, -1).forEach(oc => {
-            waypoints.push({
-                location: oc.endereco,
-                stopover: true
-            });
-        });
+        waypoints = ocorrencias.slice(1, -1).map(oc => ({
+            location: oc.endereco,
+            stopover: true
+        }));
     }
 
+    // Cria a requisição da rota
     const request = {
         origin: origin,
         destination: destination,
         waypoints: waypoints,
-        optimizeWaypoints: false, // Nós já otimizamos pela lista
+        optimizeWaypoints: false, // Nós já otimizamos
         travelMode: google.maps.TravelMode.DRIVING
     };
 
+    // Chama a API do Google Directions
     directionsService.route(request, (result, status) => {
         if (status == google.maps.DirectionsStatus.OK) {
             directionsRenderer.setDirections(result);
         } else {
             console.warn("Erro ao calcular rota: " + status);
-            // Se falhar (ex: muitos pontos ou endereço inválido), apenas desenha os pinos
+            // Se falhar (ex: muitos pontos), apenas desenha os pinos
             renderMarkers(ocorrencias);
         }
     });
@@ -278,11 +278,9 @@ function renderMarkers(ocorrencias) {
                 const marker = new google.maps.Marker({
                     map: googleMap,
                     position: results[0].geometry.location,
-                    label: `${index + 1}`
+                    label: `${index + 1}` // Número da parada
                 });
                 markers.push(marker);
-            } else {
-                console.warn(`Geocode falhou para ${oc.endereco}: ${status}`);
             }
         });
     });
@@ -294,50 +292,52 @@ function clearMarkers() {
 }
 
 function clearRoute() {
-    listaOcorrenciasMap.innerHTML = '<p>Selecione uma regional e um técnico.</p>';
+    listaOcorrenciasMap.innerHTML = '';
     directionsRenderer.setDirections({ routes: [] });
     clearMarkers();
 }
 
 // --- 7. LÓGICA DE REORDENAÇÃO MANUAL ---
 
+// Chamado quando o usuário arrasta e solta
 async function updateOrdemManual(itens) {
-    const batch = db.batch();
+    // `itens` é a nova ordem dos elementos HTML
+    const batch = db.batch(); // Cria um lote de escritas no DB
     
     Array.from(itens).forEach((item, index) => {
         const docId = item.getAttribute('data-id');
         const docRef = db.collection('ocorrencias').doc(docId);
         
+        // Define a `ordemManual` baseado na nova posição (começando de 1)
         batch.update(docRef, { ordemManual: index + 1 });
     });
     
     try {
         await batch.commit();
+        // O listener 'onSnapshot' vai detectar a mudança e
+        // re-chamar o 'processarRota()', que vai respeitar a nova ordem.
         console.log("Ordem manual salva com sucesso.");
-        // O onSnapshot vai recarregar a lista/rota
     } catch (error) {
         console.error("Erro ao salvar ordem manual: ", error);
     }
 }
 
+// Chamado pelo botão "Reajustar"
 async function resetOrdemManual() {
     const batch = db.batch();
     
+    // Pega todas as ocorrências na lista atual
     const ids = Array.from(listaOcorrenciasMap.children).map(item => item.getAttribute('data-id'));
     
-    if (ids.length === 0) return;
-    
     ids.forEach(docId => {
-        if (docId) { // Proteção contra itens vazios
-            const docRef = db.collection('ocorrencias').doc(docId);
-            batch.update(docRef, { ordemManual: null });
-        }
+        const docRef = db.collection('ocorrencias').doc(docId);
+        batch.update(docRef, { ordemManual: null }); // Reseta
     });
     
     try {
         await batch.commit();
+        // O listener 'onSnapshot' vai re-ordenar tudo pelo algoritmo
         console.log("Ordem resetada.");
-        // O onSnapshot vai re-ordenar tudo pelo algoritmo
     } catch (error) {
         console.error("Erro ao resetar ordem: ", error);
     }

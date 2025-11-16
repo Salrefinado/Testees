@@ -1,6 +1,6 @@
 /* Configurações Globais */
 :root {
-    --cor-azul-principal: #003366; /* Tom de azul escuro (baseado na imagem) */
+    --cor-azul-principal: #003366;
     --cor-fundo: #f4f7fa;
     --cor-texto: #333;
     --cor-texto-header: white;
@@ -32,16 +32,8 @@ body {
     padding: 10px 30px;
     box-shadow: 0 2px 5px var(--cor-sombra);
 }
-
-.main-header h1 {
-    font-size: 1.5rem;
-    margin: 0;
-}
-
-.header-logo img {
-    height: 40px;
-    width: auto;
-}
+.main-header h1 { font-size: 1.5rem; margin: 0; }
+.header-logo img { height: 40px; width: auto; }
 
 /* 2. CORPO PRINCIPAL */
 .app-container {
@@ -51,12 +43,7 @@ body {
 }
 
 /* 2.1. Botões de Ação */
-.action-bar {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
+.action-bar { display: flex; gap: 15px; margin-bottom: 20px; }
 .action-button {
     font-size: 1rem;
     padding: 12px 20px;
@@ -66,30 +53,27 @@ body {
     font-weight: bold;
     transition: transform 0.1s ease, box-shadow 0.1s ease;
     text-decoration: none;
-    display: inline-block;
     color: white;
 }
 .action-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
-
 .action-button.primary { background-color: var(--cor-primaria); }
 .action-button.secondary { background-color: var(--cor-secundaria); }
-.action-button.terciaria { background-color: var(--cor-terciaria); }
+.action-button.tertiaria { background-color: var(--cor-terciaria); }
+.action-button.warning { background-color: var(--cor-aviso); }
+.action-button.success { background-color: var(--cor-sucesso); }
 
 /* 2.2. Barra de Pesquisa */
-.search-bar-container {
-    margin-bottom: 20px;
-}
-
+.search-bar-container { margin-bottom: 20px; }
 #global-search-bar {
     width: 100%;
     padding: 15px;
     font-size: 1.1rem;
     border: 1px solid var(--cor-borda);
     border-radius: 5px;
-    box-sizing: border-box; /* Garante que o padding não quebre o layout */
+    box-sizing: border-box;
 }
 
 /* 2.3. Lista de Regionais (Acordeão) */
@@ -98,9 +82,8 @@ body {
     border-radius: 8px;
     box-shadow: 0 1px 3px var(--cor-sombra);
     margin-bottom: 15px;
-    overflow: hidden; /* Garante que os cantos arredondados funcionem */
+    overflow: hidden;
 }
-
 .regional-header {
     background-color: white;
     border: none;
@@ -113,47 +96,42 @@ body {
     cursor: pointer;
     font-size: 1.2rem;
 }
-.regional-header:hover {
-    background-color: #f9f9f9;
-}
-.regional-header h3 {
-    margin: 0;
-    color: var(--cor-azul-principal);
-}
-.acordeao-icone {
-    font-size: 1.5rem;
-    transition: transform 0.3s ease;
-}
-.regional-header.active .acordeao-icone {
-    transform: rotate(180deg);
-}
+.regional-header:hover { background-color: #f9f9f9; }
+.regional-header h3 { margin: 0; color: var(--cor-azul-principal); }
+.acordeao-icone { font-size: 1.5rem; transition: transform 0.3s ease; }
+.regional-header.active .acordeao-icone { transform: rotate(180deg); }
 
 .regional-body {
-    max-height: 0; /* Começa fechado */
+    max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-out;
     background-color: #fafafa;
-    padding: 0; /* Será controlado no 'active' */
+    padding: 0;
 }
-.regional-body.active {
-    padding: 20px;
-    max-height: 2000px; /* Um valor alto para permitir expansão */
-}
+.regional-body.active { padding: 20px; max-height: 2000px; }
 
-/* 2.4. Cartão de Ocorrência */
+/* 2.4. Cartão de Ocorrência (NOVO ESTILO DE HITBOX) */
 .ocorrencia-card {
     background-color: white;
     border: 1px solid var(--cor-borda);
-    border-left: 5px solid var(--cor-secundaria); /* Cor padrão */
+    border-left: 5px solid var(--cor-secundaria);
     border-radius: 5px;
     padding: 15px;
     margin-bottom: 10px;
     box-shadow: 0 1px 2px var(--cor-sombra);
+    cursor: pointer; /* Indica que é clicável */
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
+.ocorrencia-card:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+.ocorrencia-card[data-status="Em deslocamento"] { background-color: #fff9e6; }
+.ocorrencia-card[data-status="Em tratativa"] { background-color: #e6f2ff; }
 
 /* Cores de prioridade */
-.ocorrencia-card[data-contrato="VIP"] { border-left-color: var(--cor-aviso); }
-.ocorrencia-card[data-contrato="VIP BLACK"] { border-left-color: var(--cor-perigo); }
+.ocorrencia-card[data-contrato="Vip Black Preto"] { border-left-color: var(--cor-aviso); }
+.ocorrencia-card[data-contrato="Vip Black Roxo"] { border-left-color: var(--cor-perigo); }
 
 .card-header {
     display: flex;
@@ -169,14 +147,11 @@ body {
     padding: 3px 8px;
     border-radius: 12px;
 }
-.card-body p {
-    margin: 5px 0;
-    color: #555;
-}
+.card-body p { margin: 5px 0; color: #555; }
 
 /* 3. MODAIS (Pop-ups) */
 .modal-overlay {
-    display: none; /* Oculto por padrão */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -187,9 +162,7 @@ body {
     justify-content: center;
     align-items: center;
 }
-.modal-overlay.active {
-    display: flex; /* Mostra o modal */
-}
+.modal-overlay.active { display: flex; }
 
 .modal-content {
     background-color: white;
@@ -202,6 +175,8 @@ body {
     overflow-y: auto;
     position: relative;
 }
+.modal-content.modal-large { max-width: 800px; }
+.modal-content.modal-small { max-width: 450px; }
 
 .modal-close {
     position: absolute;
@@ -213,24 +188,29 @@ body {
     background: none;
     cursor: pointer;
 }
-.modal-close:hover {
-    color: #333;
+.modal-close:hover { color: #333; }
+
+/* 4. ESTILOS DE FORMULÁRIO ATUALIZADOS */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
 }
 
-/* Formulários dentro dos Modais */
-#form-add-tecnico, #form-add-ocorrencia {
+#form-add-tecnico, #form-add-ocorrencia, #form-registrar-data {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 #form-add-tecnico input, #form-add-tecnico select,
-#form-add-ocorrencia input, #form-add-ocorrencia select {
+#form-add-ocorrencia input, #form-add-ocorrencia select,
+#form-registrar-data input {
     padding: 10px;
     font-size: 1rem;
     border: 1px solid var(--cor-borda);
     border-radius: 5px;
 }
-#form-add-tecnico button, #form-add-ocorrencia button {
+#form-add-tecnico button, #form-add-ocorrencia button, #form-registrar-data button {
     padding: 12px;
     font-size: 1rem;
     border: none;
@@ -240,19 +220,18 @@ body {
     cursor: pointer;
     font-weight: bold;
 }
-
-hr {
-    border: 0;
-    border-top: 1px solid var(--cor-borda);
-    margin: 25px 0;
+fieldset {
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    padding: 10px 15px;
 }
+fieldset legend { font-weight: bold; color: var(--cor-texto); }
+fieldset label { margin-right: 15px; }
 
-/* Lista de Técnicos */
-#lista-tecnicos-ativos {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+hr { border: 0; border-top: 1px solid var(--cor-borda); margin: 25px 0; }
+
+/* Lista de Técnicos (Modal) */
+#lista-tecnicos-ativos { display: flex; flex-direction: column; gap: 10px; }
 .tecnico-item {
     display: flex;
     justify-content: space-between;
@@ -270,7 +249,43 @@ hr {
     cursor: pointer;
 }
 
-/* Classe para ocultar elementos (para a pesquisa) */
-.hidden {
-    display: none !important;
+/* 5. NOVOS MODAIS DE FLUXO */
+.action-buttons-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
+.action-buttons-vertical .action-button { width: 100%; }
+
+#lista-recomendacao-tecnicos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+.tecnico-recomendado-item {
+    display: block;
+    padding: 15px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    cursor: pointer;
+}
+.tecnico-recomendado-item:hover { background-color: #f9f9f9; }
+.tecnico-recomendado-item input { margin-right: 10px; }
+.tecnico-recomendado-item small {
+    display: block;
+    margin-left: 25px;
+    color: #555;
+}
+.tecnico-recomendado-item small.restricao {
+    color: var(--cor-perigo);
+    font-weight: bold;
+}
+.tecnico-recomendado-item:first-of-type {
+    background-color: #e6f7ff;
+    border-color: var(--cor-primaria);
+}
+
+.hidden { display: none !important; }
