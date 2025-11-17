@@ -1,0 +1,19 @@
+# Arquivos de Chave Secreta - NUNCA ENVIE ISSO!
+serviceAccountKey.json
+.env
+
+# Arquivo de configuração que contém chaves
+# (Vamos criar um "exemplo" dele no próximo passo)
+static/js/firebase-config.js
+
+# Arquivos de ambiente virtual do Python
+.venv/
+venv/
+env/
+
+# Arquivos compilados do Python
+__pycache__/
+*.pyc
+
+# Arquivos de IDE (Ex: VS Code)
+.vscode/
