@@ -6,12 +6,14 @@
     --cor-texto-header: white;
     --cor-borda: #dee2e6;
     --cor-sombra: rgba(0,0,0,0.1);
-    --cor-primaria: #007bff;
-    --cor-secundaria: #6c757d;
-    --cor-terciaria: #17a2b8;
-    --cor-perigo: #dc3545;
-    --cor-sucesso: #28a745;
-    --cor-aviso: #ffc107;
+    
+    /* Cores de Ação */
+    --cor-primaria: #007bff;     /* Azul (Em deslocamento) */
+    --cor-secundaria: #6c757d;  /* Cinza (Fila de espera) */
+    --cor-terciaria: #17a2b8;     /* Ciano (Mapa) */
+    --cor-sucesso: #28a745;     /* Verde (Finalizado) */
+    --cor-perigo: #dc3545;      /* Vermelho (Contrato VIP BLACK) */
+    --cor-aviso: #ffc107;      /* Amarelo (Em tratativa / Contrato VIP) */
 }
 
 body {
@@ -43,7 +45,12 @@ body {
 }
 
 /* 2.1. Botões de Ação */
-.action-bar { display: flex; gap: 15px; margin-bottom: 20px; }
+.action-bar { 
+    display: flex; 
+    flex-wrap: wrap; /* Para telas menores */
+    gap: 15px; 
+    margin-bottom: 20px; 
+}
 .action-button {
     font-size: 1rem;
     padding: 12px 20px;
@@ -59,11 +66,18 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
+.action-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
 .action-button.primary { background-color: var(--cor-primaria); }
 .action-button.secondary { background-color: var(--cor-secundaria); }
-.action-button.tertiaria { background-color: var(--cor-terciaria); }
+.action-button.terciaria { background-color: var(--cor-terciaria); }
 .action-button.warning { background-color: var(--cor-aviso); }
 .action-button.success { background-color: var(--cor-sucesso); }
+.action-button.danger { background-color: var(--cor-perigo); }
 
 /* 2.2. Barra de Pesquisa */
 .search-bar-container { margin-bottom: 20px; }
@@ -73,7 +87,7 @@ body {
     font-size: 1.1rem;
     border: 1px solid var(--cor-borda);
     border-radius: 5px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Garante que o padding não aumente a largura */
 }
 
 /* 2.3. Lista de Regionais (Acordeão) */
@@ -108,30 +122,35 @@ body {
     background-color: #fafafa;
     padding: 0;
 }
-.regional-body.active { padding: 20px; max-height: 2000px; }
+.regional-body.active { padding: 20px; max-height: 2000px; } /* Aumentado o max-height */
 
-/* 2.4. Cartão de Ocorrência (NOVO ESTILO DE HITBOX) */
+/* 2.4. Cartão de Ocorrência (Dashboard) */
 .ocorrencia-card {
     background-color: white;
     border: 1px solid var(--cor-borda);
-    border-left: 5px solid var(--cor-secundaria);
+    border-left: 5px solid var(--cor-secundaria); /* Padrão: Fila de espera */
     border-radius: 5px;
     padding: 15px;
     margin-bottom: 10px;
     box-shadow: 0 1px 2px var(--cor-sombra);
-    cursor: pointer; /* Indica que é clicável */
+    cursor: pointer;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .ocorrencia-card:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     transform: translateY(-2px);
 }
-.ocorrencia-card[data-status="Em deslocamento"] { background-color: #fff9e6; }
-.ocorrencia-card[data-status="Em tratativa"] { background-color: #e6f2ff; }
 
-/* Cores de prioridade */
-.ocorrencia-card[data-contrato="Vip Black Preto"] { border-left-color: var(--cor-aviso); }
-.ocorrencia-card[data-contrato="Vip Black Roxo"] { border-left-color: var(--cor-perigo); }
+/* Cores por STATUS (Dashboard) */
+.ocorrencia-card[data-status="Fila de espera"] { border-left-color: var(--cor-secundaria); }
+.ocorrencia-card[data-status="Em deslocamento"] { border-left-color: var(--cor-primaria); background-color: #f0f7ff; }
+.ocorrencia-card[data-status="Em tratativa"] { border-left-color: var(--cor-aviso); background-color: #fffbeb; }
+.ocorrencia-card[data-status="Finalizados"] { border-left-color: var(--cor-sucesso); background-color: #f6fff8; }
+
+/* Cores por CONTRATO (Dashboard) - Sobrepõe a cor da borda */
+.ocorrencia-card[data-contrato="VIP BLACK"] { border-left-color: var(--cor-perigo); }
+.ocorrencia-card[data-contrato="VIP"] { border-left-color: var(--cor-aviso); }
+.ocorrencia-card[data-contrato="COMUM"] { /* Já usa o padrão do status */ }
 
 .card-header {
     display: flex;
@@ -148,6 +167,28 @@ body {
     border-radius: 12px;
 }
 .card-body p { margin: 5px 0; color: #555; }
+.card-body p strong { color: #333; }
+
+/* 2.5. Card de Relatório (Página /relatorio) */
+.relatorio-card {
+    background-color: white;
+    border: 1px solid var(--cor-borda);
+    border-left: 5px solid var(--cor-sucesso); /* Sempre verde */
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px var(--cor-sombra);
+}
+.card-footer-datas {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--cor-borda);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #555;
+}
+.card-footer-datas strong { color: var(--cor-texto); }
 
 /* 3. MODAIS (Pop-ups) */
 .modal-overlay {
@@ -174,6 +215,11 @@ body {
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
+    animation: fadeIn 0.3s ease; /* Animação simples */
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
 }
 .modal-content.modal-large { max-width: 800px; }
 .modal-content.modal-small { max-width: 450px; }
@@ -231,7 +277,13 @@ fieldset label { margin-right: 15px; }
 hr { border: 0; border-top: 1px solid var(--cor-borda); margin: 25px 0; }
 
 /* Lista de Técnicos (Modal) */
-#lista-tecnicos-ativos { display: flex; flex-direction: column; gap: 10px; }
+#lista-tecnicos-ativos { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
 .tecnico-item {
     display: flex;
     justify-content: space-between;
@@ -239,6 +291,19 @@ hr { border: 0; border-top: 1px solid var(--cor-borda); margin: 25px 0; }
     padding: 10px;
     border: 1px solid var(--cor-borda);
     border-radius: 5px;
+}
+.tecnico-item-info {
+    display: flex;
+    flex-direction: column;
+}
+.tecnico-item-info small {
+    color: #555;
+    font-size: 0.85rem;
+}
+.tecnico-item-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 .btn-delete-tecnico {
     background-color: var(--cor-perigo);
@@ -283,9 +348,67 @@ hr { border: 0; border-top: 1px solid var(--cor-borda); margin: 25px 0; }
     color: var(--cor-perigo);
     font-weight: bold;
 }
-.tecnico-recomendado-item:first-of-type {
+/* Destaque para a melhor recomendação */
+.tecnico-recomendado-item.best-match {
     background-color: #e6f7ff;
     border-color: var(--cor-primaria);
 }
 
 .hidden { display: none !important; }
+
+/* 6. PÁGINA DE MAPA (estilos do map.html) */
+.app-container-map {
+    display: grid;
+    grid-template-columns: 350px 1fr; /* Sidebar | Mapa */
+    gap: 20px;
+    padding: 20px;
+    height: calc(100vh - 80px); /* Altura total - header */
+}
+.dispatch-sidebar {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-y: auto;
+}
+.map-area {
+    background: #eee;
+    border-radius: 8px;
+}
+#map {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+.dispatch-controls {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+#lista-ocorrencias-mapa {
+    list-style: none;
+    padding: 0;
+}
+.map-ocorrencia-item {
+    padding: 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    cursor: grab;
+    background: white;
+    border-left: 5px solid var(--cor-secundaria);
+}
+/* Cores de contrato no mapa */
+.map-ocorrencia-item[data-contrato="VIP BLACK"] { border-left-color: var(--cor-perigo); }
+.map-ocorrencia-item[data-contrato="VIP"] { border-left-color: var(--cor-aviso); }
+
+.map-ocorrencia-item small {
+    color: #555;
+    display: block;
+}
+/* Placeholder do SortableJS */
+.placeholder-drag {
+    background: #f0f8ff;
+    border: 2px dashed var(--cor-primaria);
+    height: 50px;
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundivox FSM - Relatório de Finalizados</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-title">
+            <h1>Mundivox Field Service Management</h1>
+        </div>
+        <div class="header-logo">
+            <a href="/" style="line-height: 0;"><img src="{{ url_for('static', filename='img/logo-branca-3.png.webp') }}" alt="Logo Mundivox"></a>
+        </div>
+    </header>
+
+    <main class="app-container">
+
+        <section class="action-bar">
+            <a href="/" class="action-button secondary">
+                &#8592; Voltar ao Dashboard
+            </a>
+            <a href="/mapa" class="action-button tertiary">
+                &#128205; Ver Mapa Logístico
+            </a>
+        </section>
+
+        <h2>Relatório de Ocorrências Finalizadas</h2>
+
+        <section class="search-bar-container">
+            <input type="text" id="global-search-bar" placeholder="&#128269; Pesquise no relatório por empresa, técnico, endereço, motivo...">
+        </section>
+
+        <section class="regional-list-container" id="relatorio-list">
+            <p>Carregando relatório...</p>
+        </section>
+
+    </main>
+
+    <script src="{{ url_for('static', filename='js/firebase-config.js') }}"></script>
+    
+    <script src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
+</body>
+</html>

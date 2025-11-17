@@ -18,7 +18,7 @@
             <h1>Mundivox Field Service Management</h1>
         </div>
         <div class="header-logo">
-            <img src="{{ url_for('static', filename='img/logo-branca-3.png.webp') }}" alt="Logo Mundivox">
+            <a href="/" style="line-height: 0;"><img src="{{ url_for('static', filename='img/logo-branca-3.png.webp') }}" alt="Logo Mundivox"></a>
         </div>
     </header>
 
@@ -34,7 +34,10 @@
             <a href="/mapa" class="action-button tertiary">
                 &#128205; Ver Mapa Logístico
             </a>
-            </section>
+            <a href="/relatorio" class="action-button success">
+                &#128203; Relatório de Finalizados
+            </a>
+        </section>
 
         <section class="search-bar-container">
             <input type="text" id="global-search-bar" placeholder="&#128269; Pesquise por empresa, técnico, endereço, motivo, data...">
@@ -46,15 +49,18 @@
     </main>
 
     <div id="modal-tecnicos" class="modal-overlay">
-        <div class="modal-content modal-large"> <button class="modal-close" id="btn-fechar-modal-tecnicos">&times;</button>
+        <div class="modal-content modal-large">
+            <button class="modal-close" id="btn-fechar-modal-tecnicos">&times;</button>
             <h2>Gerenciar Técnicos</h2>
             
             <form id="form-add-tecnico">
                 <h3>Adicionar Novo Técnico</h3>
-                <div class="form-grid"> <input type="text" id="tecnico-nome" placeholder="Nome do Técnico" required>
+                
+                <div class="form-grid">
+                    <input type="text" id="tecnico-nome" placeholder="Nome do Técnico" required>
                     <select id="tecnico-regional" required>
                         <option value="" disabled selected>Selecione a Regional</option>
-                        <option value="SP">SP (SPO)</option>
+                        <option value="SPO">SPO (SP Capital)</option>
                         <option value="SPI">SPI (SP Interior)</option>
                         <option value="RJ">RJ</option>
                         <option value="CTA">CTA (PR)</option>
@@ -62,22 +68,25 @@
                         <option value="PE">PE</option>
                         <option value="BA">BA</option>
                         <option value="MG">MG</option>
-                        <option value="RS">RS</option>
+                        <option value="RS">RS (POA)</option>
                     </select>
-                    <input type="tel" id="tecnico-telefone1" placeholder="Telefone 1">
-                    <input type="tel" id="tecnico-telefone2" placeholder="Telefone 2">
+                    <input type="tel" id="tecnico-telefone1" placeholder="Telefone 1 (Obrigatório)" required>
+                    <input type="tel" id="tecnico-telefone2" placeholder="Telefone 2 (Opcional)">
                     <input type="text" id="tecnico-cpf" placeholder="CPF">
                     <input type="text" id="tecnico-rg" placeholder="RG">
                 </div>
+                
                 <input type="text" id="tecnico-horario" placeholder="Horário de Trabalho (Ex: 19:00-07:00)">
                 
                 <fieldset>
                     <legend>Capacidades (O que ele FAZ)</legend>
-                    <label><input type="checkbox" class="tecnico-capacidade" value="Fusão"> Fusão</label>
-                    <label><input type="checkbox" class="tecnico-capacidade" value="Mext"> Mext</label>
+                    <label><input type="checkbox" class="tecnico-capacidade" value="link inoperante"> Fusão (link inoperante)</label>
+                    <label><input type="checkbox" class="tecnico-capacidade" value="rompimento"> Fusão (rompimento)</label>
+                    <label><input type="checkbox" class="tecnico-capacidade" value="visita na sala do cliente"> Mext (visita na sala)</label>
+                    <label><input type="checkbox" class="tecnico-capacidade" value="visita no pop"> Mext (visita no pop)</label>
                 </fieldset>
                 
-                <input type="text" id="tecnico-limitacoes" placeholder="Limitações (Ex: não faz OTDR, não faz link inoperante)">
+                <input type="text" id="tecnico-limitacoes" placeholder="Limitações ou Notas (Ex: não faz OTDR, supervisor, etc.)">
                 
                 <button type="submit">Salvar Técnico</button>
             </form>
@@ -96,10 +105,11 @@
             <h2>Adicionar Nova Ocorrência</h2>
             <form id="form-add-ocorrencia">
                 <input type="text" id="ocorrencia-empresa" placeholder="Empresa" required>
-                <input type="text" id="ocorrencia-endereco" placeholder="Endereço" required>
+                <input type="text" id="ocorrencia-endereco" placeholder="Endereço (incluir cidade/estado)" required>
+                
                 <select id="ocorrencia-regional" required>
                     <option value="" disabled selected>Selecione a Regional</option>
-                    <option value="SP">SP (SPO)</option>
+                    <option value="SPO">SPO (SP Capital)</option>
                     <option value="SPI">SPI (SP Interior)</option>
                     <option value="RJ">RJ</option>
                     <option value="CTA">CTA (PR)</option>
@@ -107,15 +117,17 @@
                     <option value="PE">PE</option>
                     <option value="BA">BA</option>
                     <option value="MG">MG</option>
-                    <option value="RS">RS</option>
+                    <option value="RS">RS (POA)</option>
                 </select>
+                
                 <select id="ocorrencia-contrato" required>
-                    <option value="Comum">Comum</option>
-                    <option value="Vip Black Preto">Vip Black Preto</option>
-                    <option value="Vip Black Roxo">Vip Black Roxo</option>
-                </select>
+                    <option value="COMUM">Comum</option>
+                    <option value="VIP">Vip</option>
+                    <option value="VIP BLACK">Vip Black</option>
+                    </select>
+                
                 <input type="number" id="ocorrencia-receita" placeholder="Receita (Ex: 1500)">
-                <input type="datetime-local" id="ocorrencia-data" placeholder="Data de Abertura" required>
+                <input type="datetime-local" id="ocorrencia-data" required>
                 
                 <select id="ocorrencia-motivo" required>
                     <option value="" disabled selected>Selecione o Motivo</option>
@@ -137,17 +149,19 @@
     <div id="modal-acoes-status" class="modal-overlay">
         <div class="modal-content modal-small">
             <button class="modal-close" id="btn-fechar-modal-acoes">&times;</button>
-            <h2 id="modal-acoes-titulo">Ocorrência: Empresa X</h2>
+            <h2 id="modal-acoes-titulo">Ocorrência: [Empresa]</h2>
+            <p>Status atual: <strong id="modal-acoes-status-atual">Fila de espera</strong></p>
             <p>Selecione a próxima ação:</p>
+            
             <div class="action-buttons-vertical">
                 <button class="action-button primary" id="btn-acao-deslocamento">
-                    Mudar para "Em deslocamento" (Atribuir Técnico)
+                    &#128663; Mudar para "Em deslocamento" (Atribuir Técnico)
                 </button>
                 <button class="action-button warning" id="btn-acao-tratativa">
-                    Mudar para "Em tratativa" (Registrar Início)
+                    &#128736; Mudar para "Em tratativa" (Registrar Início)
                 </button>
                 <button class="action-button success" id="btn-acao-finalizar">
-                    Mudar para "Finalizados" (Registrar Fim)
+                    &#10004; Mudar para "Finalizados" (Registrar Fim)
                 </button>
             </div>
         </div>
@@ -157,10 +171,11 @@
         <div class="modal-content">
             <button class="modal-close" id="btn-fechar-modal-recomendar">&times;</button>
             <h2>Atribuir Técnico</h2>
-            <p>Selecione o melhor técnico para esta ocorrência:</p>
+            <p>Recomendação (do melhor para o pior) para o motivo: <strong id="modal-recomendar-motivo"></strong></p>
             <div id="lista-recomendacao-tecnicos">
-                </div>
-            <button id="btn-confirmar-atribuicao" class="action-button primary">Confirmar Atribuição</button>
+                <p>Carregando recomendações...</p>
+            </div>
+            <button id="btn-confirmar-atribuicao" class="action-button primary" disabled>Confirmar Atribuição</button>
         </div>
     </div>
 
@@ -169,13 +184,18 @@
             <button class="modal-close" id="btn-fechar-modal-data">&times;</button>
             <h2 id="modal-data-titulo">Registrar Horário</h2>
             <form id="form-registrar-data">
-                <label for="registro-data-hora">Selecione a data e hora:</label>
+                <label for="registro-data-hora" id="modal-data-label">Selecione a data e hora:</label>
                 <input type="datetime-local" id="registro-data-hora" required>
                 <button type="submit" class="action-button success" id="btn-salvar-data">Salvar Horário</button>
             </form>
         </div>
     </div>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <script src="{{ url_for('static', filename='js/firebase-config.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>

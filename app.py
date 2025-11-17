@@ -12,7 +12,7 @@ def home():
     """
     return render_template('index.html')
 
-# --- Rota do Mapa Logístico (Nova) ---
+# --- Rota do Mapa Logístico ---
 @app.route('/mapa')
 def map_page():
     """
@@ -20,6 +20,15 @@ def map_page():
     o mapa e a lógica de roteirização.
     """
     return render_template('map.html')
+
+# --- Rota do Relatório de Finalizados (Nova) ---
+@app.route('/relatorio')
+def report_page():
+    """
+    Carrega a página de relatório (relatorio.html), que mostrará
+    as ocorrências com status "Finalizados".
+    """
+    return render_template('relatorio.html')
 
 # --- Ponto de Execução ---
 if __name__ == '__main__':
