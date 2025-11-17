@@ -7,62 +7,6 @@
     
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
-    <style>
-        .app-container-map {
-            display: grid;
-            grid-template-columns: 350px 1fr; /* Sidebar | Mapa */
-            gap: 20px;
-            padding: 20px;
-            height: calc(100vh - 80px); /* Altura total - header */
-        }
-        .dispatch-sidebar {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .map-area {
-            background: #eee;
-            border-radius: 8px;
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-            border-radius: 8px;
-        }
-        .dispatch-controls {
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        #lista-ocorrencias-mapa {
-            list-style: none;
-            padding: 0;
-        }
-        .map-ocorrencia-item {
-            padding: 10px;
-            border: 1px solid var(--cor-borda);
-            border-radius: 5px;
-            margin-bottom: 10px;
-            cursor: grab;
-            background: white;
-            border-left: 5px solid var(--cor-perigo); /* VIP BLACK */
-        }
-        .map-ocorrencia-item[data-contrato="VIP"] { border-left-color: var(--cor-aviso); }
-        .map-ocorrencia-item[data-contrato="COMUM"] { border-left-color: var(--cor-secundaria); }
-        
-        .map-ocorrencia-item small {
-            color: #555;
-            display: block;
-        }
-        .placeholder-drag {
-            background: #f0f8ff;
-            border: 2px dashed var(--cor-primaria);
-            height: 50px;
-        }
-    </style>
-    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
@@ -87,19 +31,20 @@
                 
                 <select id="select-regional">
                     <option value="" disabled selected>Selecione uma Regional</option>
-                    <option value="PR">PR</option>
+                    <option value="SPO">SPO (SP Capital)</option>
+                    <option value="SPI">SPI (SP Interior)</option>
                     <option value="RJ">RJ</option>
-                    <option value="SP">SP</option>
+                    <option value="CTA">CTA (PR)</option>
                     <option value="BH">BH</option>
                     <option value="PE">PE</option>
                     <option value="BA">BA</option>
                     <option value="MG">MG</option>
-                    <option value="RS">RS</option>
+                    <option value="RS">RS (POA)</option>
                 </select>
 
                 <select id="select-tecnico">
                     <option value="" disabled selected>Selecione um Técnico</option>
-                    </select>
+                </select>
 
                 <button id="btn-reajustar" class="action-button secondary" style="width: 100%;">Reajustar Rota (Auto)</button>
             </div>
@@ -119,9 +64,21 @@
         
     </main>
     
+    <script>
+        // Injeta a configuração do Python (app.py) diretamente no JavaScript
+        const firebaseConfig = {
+            apiKey: "{{ config.firebase_api_key | safe }}",
+            authDomain: "{{ config.firebase_auth_domain | safe }}",
+            projectId: "{{ config.firebase_project_id | safe }}",
+            storageBucket: "{{ config.firebase_storage_bucket | safe }}",
+            messagingSenderId: "{{ config.firebase_sender_id | safe }}",
+            appId: "{{ config.firebase_app_id | safe }}"
+        };
+    </script>
+    
     <script src="{{ url_for('static', filename='js/map.js') }}"></script>
     
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=SUA_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config.google_maps_key | safe }}&callback=initMap"></script>
 
 </body>
 </html>

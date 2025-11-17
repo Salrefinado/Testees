@@ -45,7 +45,17 @@
 
     </main>
 
-    <script src="{{ url_for('static', filename='js/firebase-config.js') }}"></script>
+    <script>
+        // Injeta a configuração do Python (app.py) diretamente no JavaScript
+        const firebaseConfig = {
+            apiKey: "{{ config.firebase_api_key | safe }}",
+            authDomain: "{{ config.firebase_auth_domain | safe }}",
+            projectId: "{{ config.firebase_project_id | safe }}",
+            storageBucket: "{{ config.firebase_storage_bucket | safe }}",
+            messagingSenderId: "{{ config.firebase_sender_id | safe }}",
+            appId: "{{ config.firebase_app_id | safe }}"
+        };
+    </script>
     
     <script src="{{ url_for('static', filename='js/relatorio.js') }}"></script>
 </body>

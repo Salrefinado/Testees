@@ -52,10 +52,8 @@
         <div class="modal-content modal-large">
             <button class="modal-close" id="btn-fechar-modal-tecnicos">&times;</button>
             <h2>Gerenciar Técnicos</h2>
-            
             <form id="form-add-tecnico">
                 <h3>Adicionar Novo Técnico</h3>
-                
                 <div class="form-grid">
                     <input type="text" id="tecnico-nome" placeholder="Nome do Técnico" required>
                     <select id="tecnico-regional" required>
@@ -75,9 +73,7 @@
                     <input type="text" id="tecnico-cpf" placeholder="CPF">
                     <input type="text" id="tecnico-rg" placeholder="RG">
                 </div>
-                
                 <input type="text" id="tecnico-horario" placeholder="Horário de Trabalho (Ex: 19:00-07:00)">
-                
                 <fieldset>
                     <legend>Capacidades (O que ele FAZ)</legend>
                     <label><input type="checkbox" class="tecnico-capacidade" value="link inoperante"> Fusão (link inoperante)</label>
@@ -85,17 +81,12 @@
                     <label><input type="checkbox" class="tecnico-capacidade" value="visita na sala do cliente"> Mext (visita na sala)</label>
                     <label><input type="checkbox" class="tecnico-capacidade" value="visita no pop"> Mext (visita no pop)</label>
                 </fieldset>
-                
                 <input type="text" id="tecnico-limitacoes" placeholder="Limitações ou Notas (Ex: não faz OTDR, supervisor, etc.)">
-                
                 <button type="submit">Salvar Técnico</button>
             </form>
-            
             <hr>
-            
             <h3>Técnicos Ativos</h3>
-            <div id="lista-tecnicos-ativos">
-                </div>
+            <div id="lista-tecnicos-ativos"></div>
         </div>
     </div>
 
@@ -106,7 +97,6 @@
             <form id="form-add-ocorrencia">
                 <input type="text" id="ocorrencia-empresa" placeholder="Empresa" required>
                 <input type="text" id="ocorrencia-endereco" placeholder="Endereço (incluir cidade/estado)" required>
-                
                 <select id="ocorrencia-regional" required>
                     <option value="" disabled selected>Selecione a Regional</option>
                     <option value="SPO">SPO (SP Capital)</option>
@@ -119,16 +109,13 @@
                     <option value="MG">MG</option>
                     <option value="RS">RS (POA)</option>
                 </select>
-                
                 <select id="ocorrencia-contrato" required>
                     <option value="COMUM">Comum</option>
                     <option value="VIP">Vip</option>
                     <option value="VIP BLACK">Vip Black</option>
-                    </select>
-                
+                </select>
                 <input type="number" id="ocorrencia-receita" placeholder="Receita (Ex: 1500)">
                 <input type="datetime-local" id="ocorrencia-data" required>
-                
                 <select id="ocorrencia-motivo" required>
                     <option value="" disabled selected>Selecione o Motivo</option>
                     <optgroup label="Fusão">
@@ -140,7 +127,6 @@
                         <option value="visita no pop">visita no pop</option>
                     </optgroup>
                 </select>
-
                 <button type="submit">Salvar Ocorrência</button>
             </form>
         </div>
@@ -151,18 +137,10 @@
             <button class="modal-close" id="btn-fechar-modal-acoes">&times;</button>
             <h2 id="modal-acoes-titulo">Ocorrência: [Empresa]</h2>
             <p>Status atual: <strong id="modal-acoes-status-atual">Fila de espera</strong></p>
-            <p>Selecione a próxima ação:</p>
-            
             <div class="action-buttons-vertical">
-                <button class="action-button primary" id="btn-acao-deslocamento">
-                    &#128663; Mudar para "Em deslocamento" (Atribuir Técnico)
-                </button>
-                <button class="action-button warning" id="btn-acao-tratativa">
-                    &#128736; Mudar para "Em tratativa" (Registrar Início)
-                </button>
-                <button class="action-button success" id="btn-acao-finalizar">
-                    &#10004; Mudar para "Finalizados" (Registrar Fim)
-                </button>
+                <button class="action-button primary" id="btn-acao-deslocamento">&#128663; Mudar para "Em deslocamento"</button>
+                <button class="action-button warning" id="btn-acao-tratativa">&#128736; Mudar para "Em tratativa"</button>
+                <button class="action-button success" id="btn-acao-finalizar">&#10004; Mudar para "Finalizados"</button>
             </div>
         </div>
     </div>
@@ -171,10 +149,8 @@
         <div class="modal-content">
             <button class="modal-close" id="btn-fechar-modal-recomendar">&times;</button>
             <h2>Atribuir Técnico</h2>
-            <p>Recomendação (do melhor para o pior) para o motivo: <strong id="modal-recomendar-motivo"></strong></p>
-            <div id="lista-recomendacao-tecnicos">
-                <p>Carregando recomendações...</p>
-            </div>
+            <p>Recomendação para o motivo: <strong id="modal-recomendar-motivo"></strong></p>
+            <div id="lista-recomendacao-tecnicos"></div>
             <button id="btn-confirmar-atribuicao" class="action-button primary" disabled>Confirmar Atribuição</button>
         </div>
     </div>
@@ -191,11 +167,17 @@
         </div>
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-
-    <script src="{{ url_for('static', filename='js/firebase-config.js') }}"></script>
+    <script>
+        // Injeta a configuração do Python (app.py) diretamente no JavaScript
+        const firebaseConfig = {
+            apiKey: "{{ config.firebase_api_key | safe }}",
+            authDomain: "{{ config.firebase_auth_domain | safe }}",
+            projectId: "{{ config.firebase_project_id | safe }}",
+            storageBucket: "{{ config.firebase_storage_bucket | safe }}",
+            messagingSenderId: "{{ config.firebase_sender_id | safe }}",
+            appId: "{{ config.firebase_app_id | safe }}"
+        };
+    </script>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
